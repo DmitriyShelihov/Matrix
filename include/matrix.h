@@ -34,6 +34,16 @@ class Matrix {
 				}
 			}
 		}
+		template <typename U>
+		Matrix(Matrix<U>& mat_ref, size_t sz) : _n(sz) {		//copy ctor
+			for (int i = 0; i < _n; ++i) {
+				std::vector<double> new_row;
+				_data.push_back(new_row);
+				for (int j = 0; j < _n; ++j) {
+					_data[i].push_back(static_cast<double>(mat_ref[i][j]));
+				}
+			}
+		}
 		
 		std::vector<T> operator[](int x) {
 			return _data[x];
@@ -62,37 +72,31 @@ void Matrix<T>::dump() {
 
 template <typename T>
 T Matrix<T>::det() {
-	//convert
+	Matrix<double> to_dbl_mat(*this, _n);
+	
 	double coeff = 1;
 	int cur_col = 0;
 	while (cur_col < _n) {
-		int nonzero = this->find_nonzero(cur_col);
-		std::cout << "cur_col = " << cur_col << "nonzero is " << nonzero << "\n"; 
-		if (nonzero == -1 && cmp_dbl(_data[cur_col][cur_col], 0) == 0)
+		int nonzero = to_dbl_mat.find_nonzero(cur_col);
+		if (nonzero == -1 && cmp_dbl(to_dbl_mat[cur_col][cur_col], 0) == 0)
 			return 0;
-		if (cmp_dbl(_data[cur_col][cur_col], 0) == 0 && nonzero != -1) {
-			this->swap_rows(0, nonzero);
+		if (cmp_dbl(to_dbl_mat[cur_col][cur_col], 0) == 0 && nonzero != -1) {
+			to_dbl_mat.swap_rows(0, nonzero);
 			coeff*=-1;
 		}
-		coeff *= 1/(_data[cur_col][cur_col]);
-		this->mul_row(1/(_data[cur_col][cur_col]), cur_col);
-		std::cout << "After normalize" << "\n";
-		this->dump();
+		coeff *= 1.0/(to_dbl_mat[cur_col][cur_col]);
+		to_dbl_mat.mul_row(1.0/(to_dbl_mat[cur_col][cur_col]), cur_col);
 		for (int i = 0; i < _n; ++i) {
-			if (cmp_dbl(_data[i][cur_col], 0) != 0 && i != cur_col) {
-				double save = _data[i][cur_col];
-				this->mul_row(save, cur_col);
-				this->dump();
-				this->sub_row(i, cur_col);
-				this->dump();
-				this->mul_row(1/save, cur_col);
-				this->dump();
+			if (cmp_dbl(to_dbl_mat[i][cur_col], 0) != 0 && i != cur_col) {
+				double save = to_dbl_mat[i][cur_col];
+				to_dbl_mat.mul_row(save, cur_col);
+				to_dbl_mat.sub_row(i, cur_col);
+				to_dbl_mat.mul_row(1.0/save, cur_col);
 			}
-			this->dump();
 		}
 		cur_col++;
 	}
-	return 1/coeff;
+	return 1.0/coeff;
 }
 
 template <typename T>

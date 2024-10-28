@@ -25,6 +25,11 @@ add_executable(
 	src/unit_tests.cpp
 )
 
+add_executable(
+	TEST_GEN
+	src/test_gen.cpp
+)
+
 target_include_directories(MAIN PUBLIC include/)
 target_include_directories(UNIT_TESTS PUBLIC include/)
 
