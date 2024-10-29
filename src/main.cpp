@@ -19,6 +19,6 @@ int main() {
 		}
 	}
 	Matrix<int> mat(n, vec);
-	std::cout << "Det is " << mat.det()  << "\n";
+	std::cout << static_cast<long long>(mat.det()) << "\n";
 	return 0;
 }

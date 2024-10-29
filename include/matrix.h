@@ -55,7 +55,7 @@ class Matrix {
 		int find_nonzero(size_t col);			//ret = -1 if not found
 		void swap_rows(size_t a, size_t b);
 
-		T det();
+		long double det();
 
 		void dump();
 };
@@ -71,17 +71,16 @@ void Matrix<T>::dump() {
 }
 
 template <typename T>
-T Matrix<T>::det() {
+long double Matrix<T>::det() {
 	Matrix<double> to_dbl_mat(*this, _n);
-	
-	double coeff = 1;
+	long double coeff = 1;
 	int cur_col = 0;
 	while (cur_col < _n) {
 		int nonzero = to_dbl_mat.find_nonzero(cur_col);
 		if (nonzero == -1 && cmp_dbl(to_dbl_mat[cur_col][cur_col], 0) == 0)
 			return 0;
 		if (cmp_dbl(to_dbl_mat[cur_col][cur_col], 0) == 0 && nonzero != -1) {
-			to_dbl_mat.swap_rows(0, nonzero);
+			to_dbl_mat.swap_rows(cur_col, nonzero);
 			coeff*=-1;
 		}
 		coeff *= 1.0/(to_dbl_mat[cur_col][cur_col]);
@@ -122,8 +121,8 @@ void Matrix<T>::sub_row(size_t a, size_t b) {
 
 template <typename T>
 int Matrix<T>::find_nonzero(size_t col) {
-	for (int i = 0; i < _n; ++i) {
-		if (cmp_dbl(_data[i][col], 0) != 0 && i != col)
+	for (int i = col+1; i < _n; ++i) {
+		if (cmp_dbl(_data[i][col], 0) != 0)
 			return i;
 	}
 	return -1;
