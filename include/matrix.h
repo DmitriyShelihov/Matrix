@@ -6,7 +6,7 @@
 
 const double double_tolerance = 1e-10;
 
-int cmp_dbl(double a, double b) {
+int cmp_dbl(const double a, const double b) {
 	if (std::fabs(a-b) < double_tolerance) 
 		return 0;
 	if (a-b > double_tolerance) 
@@ -17,7 +17,7 @@ int cmp_dbl(double a, double b) {
 template <typename T>     //T is a number
 class Matrix {
 	private:
-		size_t _n;
+		const size_t _n;
 		std::vector<std::vector<T>> _data;
 	public:
 		Matrix(size_t sz, std::vector<std::vector<T>>& data) 
